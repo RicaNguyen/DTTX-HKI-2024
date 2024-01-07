@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace HelloWorld
+﻿namespace HelloWorld
 {
     class Program
     {
@@ -11,11 +9,15 @@ namespace HelloWorld
             string outString = "";
             int sodu = str.Length % (n ?? 4);
 
+            // cắt phần đầu để bỏ qua separetor
             outString = str.Substring(0, sodu);
 
-            for (int i = sodu; i < str.Length; ++i)
+            // cắt từ phần sau để thêm separetor
+            str = str.Substring(sodu);
+
+            for (int i = 0; i < str.Length; ++i)
             {
-                if ((i - sodu) % n == 0)
+                if (i % n == 0)
                 {
                     outString += sep;
                 }
@@ -26,6 +28,7 @@ namespace HelloWorld
             return outString;
         }
 
+        // Các chuyển đổi từ cơ số 2
         /*10-2*/
         static string convertDecimal2Binary(int _dec, bool? printOutput = true)
         {
@@ -71,6 +74,7 @@ namespace HelloWorld
             return result;
         }
 
+        // Các chuyển đổi từ cơ số 16
         /*16-10*/
         static int convertHex2Decimal(string _hex, bool? printOutput = true)
         {
@@ -93,7 +97,7 @@ namespace HelloWorld
         }
 
         /*16-2*/
-        static string convertHex2Bin(string _hex, bool? printOutput = true)
+        static string convertHex2Binary(string _hex, bool? printOutput = true)
         {
             // chuyen 16 sang 10, sau do chuyen 10 sang 2
             int decimalValye = convertHex2Decimal(_hex, false);
@@ -101,12 +105,13 @@ namespace HelloWorld
 
             if (printOutput == true)
             {
-                Console.WriteLine($"convertHex2Bin:{FormatString(_hex)} => {FormatString(binaryValue)}");
+                Console.WriteLine($"convertHex2Binary:{FormatString(_hex)} => {FormatString(binaryValue)}");
             }
 
             return binaryValue;
         }
 
+        // Các chuyển đổi từ cơ số 2
         /*2-10*/
         static int convertBinary2Decimal(string _binary, bool? printOutput = true)
         {
@@ -146,14 +151,56 @@ namespace HelloWorld
 
         static void Main(string[] args)
         {
-            convertDecimal2Binary(120);
-            convertDecimal2Hex(120456456);
+            while (true)
+            {
+                Console.WriteLine("Please select Input Value:");
+                Console.WriteLine("0 - Exit");
+                Console.WriteLine("1 - Decimal");
+                Console.WriteLine("2 - Hex");
+                Console.WriteLine("3 - Binary");
 
-            convertHex2Decimal("75E0508");
-            convertHex2Bin("75E0508");
+                string? choie = Console.ReadLine();
 
-            convertBinary2Decimal("1111000");
-            convertBinary2Hex("11110011111000");
+                switch (choie)
+                {
+                    case "0":
+                        return;
+                    case "1":
+                        Console.WriteLine("Enter Decimal value:");
+                        int decimalInput = int.Parse(Console.ReadLine());
+
+                        convertDecimal2Binary(decimalInput);
+                        convertDecimal2Hex(decimalInput);
+                        break;
+                    case "2":
+                        Console.WriteLine("Enter Hex value:");
+                        string hexInput = Console.ReadLine();
+
+                        convertHex2Binary(hexInput);
+                        convertHex2Decimal(hexInput);
+                        break;
+                    case "3":
+                        Console.WriteLine("Enter Binary value:");
+                        string binaryInput = Console.ReadLine();
+
+                        convertBinary2Hex(binaryInput);
+                        convertBinary2Decimal(binaryInput);
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice!!!!");
+                        break;
+                }
+
+            }
+
+            //convertDecimal2Binary(120);
+            //convertDecimal2Hex(120456456);
+
+            //convertHex2Decimal("75E0508");
+            //convertHex2Binary("75E0508");
+
+            //convertBinary2Decimal("1111000");
+            //convertBinary2Hex("11110011111000");
         }
     }
 }
