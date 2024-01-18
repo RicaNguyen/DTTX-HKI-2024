@@ -1,0 +1,14 @@
+D:\Code\C#\he-thong-may-tinh\BTAP1\BTAP1\bin\Debug\net6.0\BTAP1.exe
+D:\Code\C#\he-thong-may-tinh\BTAP1\BTAP1\bin\Debug\net6.0\BTAP1.deps.json
+D:\Code\C#\he-thong-may-tinh\BTAP1\BTAP1\bin\Debug\net6.0\BTAP1.runtimeconfig.json
+D:\Code\C#\he-thong-may-tinh\BTAP1\BTAP1\bin\Debug\net6.0\BTAP1.dll
+D:\Code\C#\he-thong-may-tinh\BTAP1\BTAP1\bin\Debug\net6.0\BTAP1.pdb
+D:\Code\C#\he-thong-may-tinh\BTAP1\BTAP1\obj\Debug\net6.0\BTAP1.GeneratedMSBuildEditorConfig.editorconfig
+D:\Code\C#\he-thong-may-tinh\BTAP1\BTAP1\obj\Debug\net6.0\BTAP1.AssemblyInfoInputs.cache
+D:\Code\C#\he-thong-may-tinh\BTAP1\BTAP1\obj\Debug\net6.0\BTAP1.AssemblyInfo.cs
+D:\Code\C#\he-thong-may-tinh\BTAP1\BTAP1\obj\Debug\net6.0\BTAP1.csproj.CoreCompileInputs.cache
+D:\Code\C#\he-thong-may-tinh\BTAP1\BTAP1\obj\Debug\net6.0\BTAP1.dll
+D:\Code\C#\he-thong-may-tinh\BTAP1\BTAP1\obj\Debug\net6.0\refint\BTAP1.dll
+D:\Code\C#\he-thong-may-tinh\BTAP1\BTAP1\obj\Debug\net6.0\BTAP1.pdb
+D:\Code\C#\he-thong-may-tinh\BTAP1\BTAP1\obj\Debug\net6.0\BTAP1.genruntimeconfig.cache
+D:\Code\C#\he-thong-may-tinh\BTAP1\BTAP1\obj\Debug\net6.0\ref\BTAP1.dll
