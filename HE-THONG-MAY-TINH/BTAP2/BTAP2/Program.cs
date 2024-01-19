@@ -2,8 +2,6 @@
 
 - Cho mảng 1 chiều A gồm 32 phần tử là các số 0 hoặc 1. Hãy xây dựng số nguyên X 4 byte có các bit giống với các phần tử mảng A, sau đó xuất X ra màn hình.*/
 
-using System;
-
 namespace HelloWorld
 {
     class Program
@@ -14,6 +12,24 @@ namespace HelloWorld
             int X = Convert.ToInt32(Console.ReadLine());
             return X;
         }
+        static string[] InputBinaryNum()
+        {
+            Console.WriteLine("Please input binary 32 element: ");
+            string? B = Console.ReadLine();
+
+            // https://learn.microsoft.com/en-us/dotnet/standard/base-types/padding
+            B = B.PadLeft(32, '0');
+            string[] arr = B.Split();
+            return arr;
+        }
+
+        static int convertBinaryToInt(string[] bins)
+        {
+
+
+            return 0;
+        }
+
         static string FormatString(string str, int? n = 4, string? sep = " ")
         {
             string outString = "";
@@ -122,10 +138,12 @@ namespace HelloWorld
 
         static void Main(string[] args)
         {
-            int X = InputIntergerX();
-            string bin1 = convertDecimal2Binary(X);
+            /*            int X = InputIntergerX();
+                        string bin1 = convertDecimal2Binary(X);*/
 
             //Console.Write("Binary String: " + FormatString(Convert.ToString(X, 2)));
+            string[] bin2 = InputBinaryNum();
+            Console.WriteLine(FormatString(string.Join("", bin2.ToArray())));
         }
     }
 }
