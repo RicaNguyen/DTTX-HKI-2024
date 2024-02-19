@@ -13,14 +13,22 @@ Author: Clederson Cruz
 Year: 2017
 License: GNU GENERAL PUBLIC LICENSE (GPL)
 """
-
+BOARD_SIZE = 4
 HUMAN = -1
 COMP = +1
-board = [
-    [0, 0, 0],
-    [0, 0, 0],
-    [0, 0, 0],
-]
+
+# board = [
+#     [0, 0, 0],
+#     [0, 0, 0],
+#     [0, 0, 0],
+# ]
+board = []
+# khởi tạo mảng 2D với giá trị 0, kích thước BOARD_SIZE
+for i in range(0, BOARD_SIZE):
+    board_row = []
+    for j in range(0, BOARD_SIZE):
+        board_row.append(0)
+    board.append(board_row)
 
 
 def evaluate(state):
@@ -49,20 +57,54 @@ def wins(state, player):
     :param player: a human or a computer
     :return: True if the player wins
     """
-    win_state = [
-        [state[0][0], state[0][1], state[0][2]],
-        [state[1][0], state[1][1], state[1][2]],
-        [state[2][0], state[2][1], state[2][2]],
-        [state[0][0], state[1][0], state[2][0]],
-        [state[0][1], state[1][1], state[2][1]],
-        [state[0][2], state[1][2], state[2][2]],
-        [state[0][0], state[1][1], state[2][2]],
-        [state[2][0], state[1][1], state[0][2]],
-    ]
-    if [player, player, player] in win_state:
+
+    # duyệt theo rows
+    for row_index in range(0, BOARD_SIZE):
+        current_row = state[row_index]
+        # kiểm tra xem các item có giá trị là player hay ko?
+        # nếu 1 row chỉ chứa toàn HUMAN or COMP thì set chỉ có 1 item, vì set ko thể chứa item trùng lập
+        if current_row[0] == player and len(set(current_row)) == 1:
+            return True
+
+        # sử dụng hàng thứ row_index để duyệt cột
+        # duyệt theo cột
+
+        col_set = set()
+        for col_index in range(0, BOARD_SIZE):
+            col_set.add(state[col_index][row_index])
+        if state[col_index][row_index] == player and len(set(col_set)) == 1:
+            return True
+
+    # duyệt 2 đường chéo
+    # chéo từ trái sang phải
+    left_2_right_set = set()
+    for index in range(0, BOARD_SIZE):
+        left_2_right_set.add(state[index][index])
+    if state[0][0] == player and len(set(left_2_right_set)) == 1:
         return True
-    else:
-        return False
+
+    # chéo từ phải sang trái
+    right_2_left_set = set()
+    for index in range(0, BOARD_SIZE):
+        right_2_left_set.add(state[BOARD_SIZE-index-1][index])
+    if state[BOARD_SIZE - 1][0] == player and len(set(right_2_left_set)) == 1:
+        return True
+
+    return False
+    # win_state = [
+    #     [state[0][0], state[0][1], state[0][2]],
+    #     [state[1][0], state[1][1], state[1][2]],
+    #     [state[2][0], state[2][1], state[2][2]],
+    #     [state[0][0], state[1][0], state[2][0]],
+    #     [state[0][1], state[1][1], state[2][1]],
+    #     [state[0][2], state[1][2], state[2][2]],
+    #     [state[0][0], state[1][1], state[2][2]],
+    #     [state[2][0], state[1][1], state[0][2]],
+    # ]
+    # if [player, player, player] in win_state:
+    #     return True
+    # else:
+    #     return False
 
 
 def game_over(state):
@@ -117,39 +159,46 @@ def set_move(x, y, player):
         return False
 
 
-def minimax(state, depth, player):
-    """
-    AI function that choice the best move
-    :param state: current state of the board
-    :param depth: node index in the tree (0 <= depth <= 9),
-    but never nine in this case (see iaturn() function)
-    :param player: an human or a computer
-    :return: a list with [the best row, best col, best score]
-    """
+def minimax(board, depth, alpha, beta, player):
+    if depth == 0 or game_over(board):
+        return evaluate(board)
+
     if player == COMP:
-        best = [-1, -1, -infinity]
+        best_value = -infinity
+        for cell in empty_cells(board):
+            board[cell[0]][cell[1]] = player
+            value = minimax(board, depth - 1, alpha, beta, HUMAN)
+            board[cell[0]][cell[1]] = 0
+            best_value = max(best_value, value)
+            alpha = max(alpha, best_value)
+            if beta <= alpha:
+                break
+        return best_value
     else:
-        best = [-1, -1, +infinity]
+        best_value = infinity
+        for cell in empty_cells(board):
+            board[cell[0]][cell[1]] = player
+            value = minimax(board, depth - 1, alpha, beta, COMP)
+            board[cell[0]][cell[1]] = 0
+            best_value = min(best_value, value)
+            beta = min(beta, best_value)
+            if beta <= alpha:
+                break
+        return best_value
 
-    if depth == 0 or game_over(state):
-        score = evaluate(state)
-        return [-1, -1, score]
 
-    for cell in empty_cells(state):
+def find_best_move(board):
+    best_value = -infinity
+    best_move = None
+    for cell in empty_cells(board):
         x, y = cell[0], cell[1]
-        state[x][y] = player
-        score = minimax(state, depth - 1, -player)
-        state[x][y] = 0
-        score[0], score[1] = x, y
-
-        if player == COMP:
-            if score[2] > best[2]:
-                best = score  # max value
-        else:
-            if score[2] < best[2]:
-                best = score  # min value
-
-    return best
+        board[x][y] = COMP
+        value = minimax(board, 4, -infinity, infinity, HUMAN)
+        board[x][y] = 0
+        if value > best_value:
+            best_value = value
+            best_move = cell
+    return best_move
 
 
 def clean():
@@ -200,11 +249,11 @@ def ai_turn(c_choice, h_choice):
     print(f'Computer turn [{c_choice}]')
     render(board, c_choice, h_choice)
 
-    if depth == 9:
+    if depth == BOARD_SIZE*BOARD_SIZE:
         x = choice([0, 1, 2])
         y = choice([0, 1, 2])
     else:
-        move = minimax(board, depth, COMP)
+        move = find_best_move(board)
         x, y = move[0], move[1]
 
     set_move(x, y, COMP)
@@ -234,11 +283,25 @@ def human_turn(c_choice, h_choice):
     print(f'Human turn [{h_choice}]')
     render(board, c_choice, h_choice)
 
-    while move < 1 or move > 9:
+    while move < 1 or move > BOARD_SIZE*BOARD_SIZE:
         try:
-            move = int(input('Use numpad (1..9): '))
-            coord = moves[move]
-            can_move = set_move(coord[0], coord[1], HUMAN)
+            move = int(input(f'Use numpad (1..{BOARD_SIZE*BOARD_SIZE}): '))
+            # coord = moves[move]
+            x = 0
+            y = 0
+            numpad_value = 0
+            flag = False
+            for i in range(0, BOARD_SIZE):
+                if flag:
+                    break
+                for j in range(0, BOARD_SIZE):
+                    numpad_value = numpad_value+1
+                    if numpad_value == move:
+                        x = i
+                        y = j
+                        break
+
+            can_move = set_move(x, y, HUMAN)
 
             if not can_move:
                 print('Bad move')
