@@ -16,11 +16,13 @@ License: GNU GENERAL PUBLIC LICENSE (GPL)
 BOARD_SIZE = 5
 HUMAN = -1
 COMP = +1
-# chiều sâu của thuật toán minimax sẽ dừng, 0 nếu vét cạn
-DEPTH = BOARD_SIZE//2
+
+# chiều sâu của thuật toán minimax
+DEPTH = 4
 
 # tùy chỉnh luật chơi, 3,4 or 5 dấu liên tục
 WIN_THRESHOLD = 4
+
 # board = [
 #     [0, 0, 0],
 #     [0, 0, 0],
@@ -164,13 +166,22 @@ def set_move(x, y, player):
 
 
 def minimax(state, depth, player, alpha, beta):
-    if depth == DEPTH or game_over(state):
-        return evaluate(state)
-
+    """
+    AI function that choice the best move
+    :param state: current state of the board
+    :param depth: node index in the tree (0 <= depth <= 9),
+    but never nine in this case (see iaturn() function)
+    :param player: an human or a computer
+    :return: a list with [the best row, best col, best score]
+    """
     if player == COMP:
-        best = -infinity
+        best = [-1, -1, -infinity]
     else:
-        best = infinity
+        best = [-1, -1, +infinity]
+
+    if depth == 0 or game_over(state):
+        score = evaluate(state)
+        return [-1, -1, score]
 
     for cell in empty_cells(state):
         x, y = cell[0], cell[1]
@@ -179,17 +190,17 @@ def minimax(state, depth, player, alpha, beta):
         # -player đổi lượt chơi của AI và human
         score = minimax(state, depth - 1, -player, alpha, beta)
         state[x][y] = 0
-
+        score[0], score[1] = x, y
         if player == COMP:
-            if score > best:
+            if score[2] > best[2]:
                 best = score  # max value
-            alpha = max(alpha, best)
+            alpha = max(alpha, best[2])
             if beta <= alpha:
                 break
         else:
-            if score < best:
+            if score[2] < best[2]:
                 best = score  # min value
-            beta = min(beta, best)
+            beta = min(beta, best[2])
             if beta <= alpha:
                 break
 
@@ -217,27 +228,6 @@ def minimax(state, depth, player, alpha, beta):
     #         if beta <= alpha:
     #             break
     #     return best_value
-
-
-def find_best_move(board):
-    best_value = -infinity
-    best_move = []
-    for cell in empty_cells(board):
-        x, y = cell[0], cell[1]
-
-        # lượt của AI. thử đi ô có tọa độ x,y
-        board[x][y] = COMP
-
-        # minimax mô phỏng lượt của human
-        heuristic_value = minimax(
-            board, BOARD_SIZE, HUMAN, -infinity, infinity)
-
-        # revert lại ô đã thử đi
-        board[x][y] = 0
-        if heuristic_value > best_value:
-            best_value = heuristic_value
-            best_move = cell
-    return best_move
 
 
 def clean():
@@ -281,7 +271,7 @@ def ai_turn(c_choice, h_choice):
     :return:
     """
     depth = len(empty_cells(board))
-    if depth == DEPTH or game_over(board):
+    if depth == 0 or game_over(board):
         return
 
     clean()
@@ -292,7 +282,7 @@ def ai_turn(c_choice, h_choice):
         x = choice([0, 1, 2])
         y = choice([0, 1, 2])
     else:
-        move = find_best_move(board)
+        move = minimax(board, DEPTH, COMP, -infinity, infinity)
         x, y = move[0], move[1]
 
     set_move(x, y, COMP)
