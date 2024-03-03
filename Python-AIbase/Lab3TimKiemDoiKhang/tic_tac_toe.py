@@ -13,15 +13,15 @@ Author: Clederson Cruz
 Year: 2017
 License: GNU GENERAL PUBLIC LICENSE (GPL)
 """
-BOARD_SIZE = 5
+# kích thước bảng tic-tac-toe
+BOARD_SIZE = 10
 HUMAN = -1
 COMP = +1
 
-# chiều sâu của thuật toán minimax
-DEPTH = 4
-
 # tùy chỉnh luật chơi, 3,4 or 5 dấu liên tục
-WIN_THRESHOLD = 4
+WIN_THRESHOLD = 3
+# chiều sâu của thuật toán minimax = min(DEPTH, current number of empty cells)
+DEPTH = 10
 
 # board = [
 #     [0, 0, 0],
@@ -53,6 +53,24 @@ def evaluate(state):
     return score
 
 
+def count_maker(state, player, current_cell, delta_i, delta_j):
+    next_i = current_cell[0] + delta_i
+    next_j = current_cell[1] + delta_j
+    if next_i >= 0 and next_i < BOARD_SIZE and next_j >= 0 and next_j < BOARD_SIZE:
+        if state[next_i][next_j] == player:
+            return 1 + count_maker(state, player, [next_i, next_j], delta_i, delta_j)
+
+    return 0
+
+
+def count_makers(state, player, current_cell, delta_i, delta_j):
+    x, y = current_cell[0], current_cell[1]
+    count = 0
+    if state[x][y] == player:
+        count = 1 + count_maker(state, player, current_cell, delta_i, delta_j)
+    return count
+
+
 def wins(state, player):
     """
     This function tests if a specific player wins. Possibilities:
@@ -64,37 +82,55 @@ def wins(state, player):
     :return: True if the player wins
     """
 
-    # duyệt theo rows
     for row_index in range(0, BOARD_SIZE):
-        current_row = state[row_index]
-        # kiểm tra xem các item có giá trị là player hay ko?
-        # nếu 1 row chỉ chứa toàn HUMAN or COMP thì set chỉ có 1 item, vì set ko thể chứa item trùng lập
-        if current_row[0] == player and len(set(current_row)) == 1:
-            return True
-
-        # sử dụng hàng thứ row_index để duyệt cột
-        # duyệt theo cột
-
-        col_set = set()
         for col_index in range(0, BOARD_SIZE):
-            col_set.add(state[col_index][row_index])
-        if state[col_index][row_index] == player and len(set(col_set)) == 1:
-            return True
+            # đi về phía trên
+            total_count = count_makers(
+                state, player, [row_index, col_index], -1, 0)
+            if total_count == WIN_THRESHOLD:
+                return True
 
-    # duyệt 2 đường chéo
-    # chéo từ trái sang phải
-    left_2_right_set = set()
-    for index in range(0, BOARD_SIZE):
-        left_2_right_set.add(state[index][index])
-    if state[0][0] == player and len(set(left_2_right_set)) == 1:
-        return True
+            # đi về phía trên-phải
+            total_count = count_makers(
+                state, player, [row_index, col_index], -1, +1)
+            if total_count == WIN_THRESHOLD:
+                return True
 
-    # chéo từ phải sang trái
-    right_2_left_set = set()
-    for index in range(0, BOARD_SIZE):
-        right_2_left_set.add(state[BOARD_SIZE-index-1][index])
-    if state[BOARD_SIZE - 1][0] == player and len(set(right_2_left_set)) == 1:
-        return True
+            # đi về phía phải
+            total_count = count_makers(
+                state, player, [row_index, col_index], 0, +1)
+            if total_count == WIN_THRESHOLD:
+                return True
+
+            # đi về phía dưới-phải
+            total_count = count_makers(
+                state, player, [row_index, col_index], +1, +1)
+            if total_count == WIN_THRESHOLD:
+                return True
+
+                # đi về phía dưới
+            total_count = count_makers(
+                state, player, [row_index, col_index], +1, 0)
+            if total_count == WIN_THRESHOLD:
+                return True
+
+                # đi về phía dưới-trái
+            total_count = count_makers(
+                state, player, [row_index, col_index], +1, -1)
+            if total_count == WIN_THRESHOLD:
+                return True
+
+                # đi về phía trái
+            total_count = count_makers(
+                state, player, [row_index, col_index], 0, -1)
+            if total_count == WIN_THRESHOLD:
+                return True
+
+                # đi về phía trên-trái
+            total_count = count_makers(
+                state, player, [row_index, col_index], -1, -1)
+            if total_count == WIN_THRESHOLD:
+                return True
 
     return False
     # win_state = [
@@ -122,6 +158,44 @@ def game_over(state):
     return wins(state, HUMAN) or wins(state, COMP)
 
 
+def check_all_boundary_empty(state, center_cell):
+    x, y = center_cell[0], center_cell[1]
+
+    check = True
+    # top
+    if (x-1 >= 0 and state[x-1][y] != 0):
+        check = False
+    # right
+    if (y+1 < BOARD_SIZE and state[x][y+1] != 0):
+        check = False
+
+    # bottom
+    if (x+1 < BOARD_SIZE and state[x+1][y] != 0):
+        check = False
+
+    # left
+    if (y-1 >= 0 and state[x][y-1] != 0):
+        check = False
+
+    # top right
+    if (x-1 >= 0 and y+1 < BOARD_SIZE and state[x-1][y+1] != 0):
+        check = False
+
+    # bottom right
+    if (x+1 < BOARD_SIZE and y+1 < BOARD_SIZE and state[x+1][y+1] != 0):
+        check = False
+
+    # bottom left
+    if (x+1 < BOARD_SIZE and y-1 >= 0 < BOARD_SIZE and state[x+1][y-1] != 0):
+        check = False
+
+    # top left
+    if (x-1 >= 0 and y-1 >= 0 < BOARD_SIZE and state[x-1][y-1] != 0):
+        check = False
+
+    return not check
+
+
 def empty_cells(state):
     """
     Each empty cell will be added into cells' list
@@ -136,6 +210,17 @@ def empty_cells(state):
                 cells.append([x, y])
 
     return cells
+
+
+def ai_enhance_empty_cells(state):
+    arr_empty_cells = empty_cells(state)
+    best_cells = []
+
+    for item in arr_empty_cells:
+        if check_all_boundary_empty(state, item):
+            best_cells.append(item)
+
+    return best_cells
 
 
 def valid_move(x, y):
@@ -183,7 +268,7 @@ def minimax(state, depth, player, alpha, beta):
         score = evaluate(state)
         return [-1, -1, score]
 
-    for cell in empty_cells(state):
+    for cell in ai_enhance_empty_cells(state):
         x, y = cell[0], cell[1]
         state[x][y] = player
 
@@ -282,7 +367,8 @@ def ai_turn(c_choice, h_choice):
         x = choice([0, 1, 2])
         y = choice([0, 1, 2])
     else:
-        move = minimax(board, DEPTH, COMP, -infinity, infinity)
+        move = minimax(board, min(DEPTH, depth),
+                       COMP, -infinity, infinity)
         x, y = move[0], move[1]
 
     set_move(x, y, COMP)
