@@ -1,0 +1,26 @@
+# num1 * num2 trả kq cho thanh ghi $s0
+mult $t0,$t1 # thanh ghi $lo = $t0 * $t1
+mflo $s0 # load value từ $lo vào $s0
+
+
+div $t0,$t1, 
+mflo $s0 # load phan nguyen từ $lo vào $s0
+mfhi $s1 # load phan du từ $hi vào $s1
+
+
+
+Hãy sử dụng hợp ngữ MIPS để thực hiện các bài tập sau:
+Bài tập 1. Viết chương trình nhập số nguyên n. Kiểm tra n có là số nguyên tố hay không ?
+Bài tập 2. Viết chương trình nhập số nguyên n. Kiểm tra n có là số nguyên hoàn thiện hay không ?
+Bài tập 3. Viết chương trình nhập vào số nguyên n. Kiểm tra n có là số chính phương hay không ?
+Bài tập 4. Viết chương trình nhập số nguyên n. Kiểm tra n có là số đối xưng hay không ?
+Bài tập 5. Viết chương trình thực hiện các chức năng sau:
+1. Nhập mảng 1 chiều n phần tử số nguyên
+
+2. Xuất mảng
+
+3. Liệt kê các số nguyên tố
+
+4. Tìm giá trị lớn nhất trong mảng
+
+5. Tính trung bình mảng
